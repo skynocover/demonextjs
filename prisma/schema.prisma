@@ -1,0 +1,35 @@
+datasource db {
+    provider = "sqlite"
+    url      = "file:./dev.db"
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Service {
+    id          Int         @id @default(autoincrement())
+    name        String
+    serviceType String
+    host        String
+    username    String
+    privateKey  String
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    ServiceDB   ServiceDB[]
+}
+
+model ServiceDB {
+    id            Int      @id @default(autoincrement())
+    containerName String
+    dbUser        String
+    dbPW          String
+    path          String
+    count         Int
+    DBName        String
+    DBtype        String
+    serviceId     Int
+    service       Service  @relation(fields: [serviceId], references: [id])
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+}
