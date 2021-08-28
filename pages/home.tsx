@@ -11,8 +11,9 @@ import { Notification } from '../components/Notification';
 import { prisma } from '../database/db';
 import { AppContext } from '../components/AppContext';
 import { DangerButton } from '../components/DangerButton';
+import { AddService } from '../modals/AddService';
 
-const home = ({ error }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home = ({ services, error }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const appCtx = React.useContext(AppContext);
   const [dataSource, setDataSource] = React.useState<Service[]>([]); //coulmns data
 
@@ -33,19 +34,14 @@ const home = ({ error }: InferGetServerSidePropsType<typeof getServerSideProps>)
       dataIndex: 'name',
     },
     {
-      title: 'ServiceType',
+      title: 'Domain',
       align: 'center',
-      dataIndex: 'serviceType',
+      dataIndex: 'domain',
     },
     {
-      title: 'Host',
+      title: 'Port',
       align: 'center',
-      dataIndex: 'host',
-    },
-    {
-      title: 'SSH Username',
-      align: 'center',
-      dataIndex: 'username',
+      dataIndex: 'port',
     },
     {
       align: 'center',
@@ -56,7 +52,7 @@ const home = ({ error }: InferGetServerSidePropsType<typeof getServerSideProps>)
           onClick={async () => {
             let data = await appCtx.fetch('delete', `/api/service?id=${item.id}`);
             if (data) {
-              router.push('/home');
+              router.push('/Home');
               Notification.add('success', 'Delete Success');
             }
           }}
@@ -69,7 +65,7 @@ const home = ({ error }: InferGetServerSidePropsType<typeof getServerSideProps>)
     if (error) {
       Notification.add('error', error);
     }
-    const temp = [{ id: 0, name: 'home' }].map((service: Service) => {
+    const temp = [{ id: 0, name: 'Home' }].concat(services).map((service: Service) => {
       return {
         key: service.name,
         title: service.name,
@@ -81,15 +77,20 @@ const home = ({ error }: InferGetServerSidePropsType<typeof getServerSideProps>)
   const content = (
     <>
       <div className="d-flex justify-content-end mb-2">
-        <antd.Button type="primary" onClick={() => {}}>
+        <antd.Button
+          type="primary"
+          onClick={() => {
+            appCtx.setModal(<AddService />);
+          }}
+        >
           新增
         </antd.Button>
       </div>
-      <antd.Table dataSource={dataSource} columns={columns} pagination={false} />
+      <antd.Table dataSource={services} columns={columns} pagination={false} />
     </>
   );
 
-  return <MainPage content={content} menuKey="home" />;
+  return <MainPage content={content} menuKey="Home" />;
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
@@ -105,13 +106,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
       };
     }
 
-    // const services = await prisma.service.findMany({
-    //   select: { id: true, name: true, serviceType: true, host: true, username: true },
-    // });
-    return { props: {} };
+    const services = await prisma.service.findMany({
+      select: { id: true, name: true, domain: true, port: true },
+    });
+    return { props: { services } };
   } catch (error) {
     return { props: { error: error.message } };
   }
 };
 
-export default home;
+export default Home;

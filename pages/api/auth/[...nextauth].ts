@@ -1,4 +1,3 @@
-import { SignalCellularConnectedNoInternet0Bar } from '@material-ui/icons';
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
 

@@ -15,7 +15,7 @@ export default function Index({ data }: InferGetServerSidePropsType<typeof getSe
     if (!loading && !session) {
       signIn();
     } else if (!loading && session) {
-      router.push('/home');
+      router.push('/Home');
     }
   }, [loading, session]);
   return <div></div>;

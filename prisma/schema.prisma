@@ -1,35 +1,28 @@
 datasource db {
-    provider = "sqlite"
-    url      = "file:./dev.db"
+    provider = "mongodb"
+    url      = env("DATABASE_URL")
 }
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["mongoDb"]
 }
 
 model Service {
-    id          Int         @id @default(autoincrement())
-    name        String
-    serviceType String
-    host        String
-    username    String
-    privateKey  String
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-    ServiceDB   ServiceDB[]
+    id        String    @id @default(dbgenerated()) @map("_id") @db.ObjectId
+    name      String
+    domain    String
+    port      Int
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    Handler   Handler[]
 }
 
-model ServiceDB {
-    id            Int      @id @default(autoincrement())
-    containerName String
-    dbUser        String
-    dbPW          String
-    path          String
-    count         Int
-    DBName        String
-    DBtype        String
-    serviceId     Int
-    service       Service  @relation(fields: [serviceId], references: [id])
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+model Handler {
+    id        String  @id @default(dbgenerated()) @map("_id") @db.ObjectId
+    serviceId String  @db.ObjectId
+    Service   Service @relation(fields: [serviceId], references: [id])
+    type      String?
+    routes    String?
+    target    String?
 }
