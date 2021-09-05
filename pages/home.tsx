@@ -65,13 +65,6 @@ const Home = ({ services, error }: InferGetServerSidePropsType<typeof getServerS
     if (error) {
       Notification.add('error', error);
     }
-    const temp = [{ id: 0, name: 'Home' }].concat(services).map((service: Service) => {
-      return {
-        key: service.name,
-        title: service.name,
-      };
-    });
-    appCtx.setMenus(temp);
   }, []);
 
   const content = (
@@ -110,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
       select: { id: true, name: true, domain: true, port: true },
     });
     return { props: { services } };
-  } catch (error) {
+  } catch (error: any) {
     return { props: { error: error.message } };
   }
 };

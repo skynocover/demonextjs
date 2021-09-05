@@ -9,6 +9,11 @@ import { MainPage } from '../components/MainPage';
 import { Notification } from '../components/Notification';
 import { getSession } from 'next-auth/client';
 
+interface backup {
+  filename: string;
+  time: string;
+}
+
 export default function Service({
   backups,
   error,
@@ -57,11 +62,6 @@ export default function Service({
   return <MainPage content={content} menuKey={router.query.service as string} />;
 }
 
-interface backup {
-  filename: string;
-  time: string;
-}
-
 export const getServerSideProps: GetServerSideProps = async ({ req, res, query }) => {
   try {
     const session = await getSession({ req });
@@ -78,7 +78,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res, query }
     let backups: backup[] = [];
 
     return { props: { backups } };
-  } catch (error) {
+  } catch (error: any) {
     return { props: { error: error.message } };
   }
 };

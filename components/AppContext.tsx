@@ -4,9 +4,11 @@ import * as antd from 'antd';
 
 import { Notification } from '../components/Notification';
 
-interface Menu {
-  key: string;
-  title: string;
+export interface service {
+  id: string;
+  domain: string;
+  name: string;
+  port: string;
 }
 
 interface AppContextProps {
@@ -23,8 +25,8 @@ interface AppContextProps {
     param?: any,
   ) => Promise<any>;
 
-  menus: Menu[];
-  setMenus: React.Dispatch<React.SetStateAction<Menu[]>>;
+  dataSource: service[];
+  setDataSource: React.Dispatch<React.SetStateAction<service[]>>;
 }
 
 const AppContext = React.createContext<AppContextProps>(undefined!);
@@ -39,7 +41,7 @@ const AppProvider = ({ children }: AppProviderProps) => {
   const [account, setAccount] = React.useState('admin');
   const [isAdmin, setIsAdmin] = React.useState(false);
 
-  const [menus, setMenus] = React.useState<Menu[]>([]);
+  const [dataSource, setDataSource] = React.useState<service[]>([]); //coulmns data
 
   /////////////////////////////////////////////////////
 
@@ -67,7 +69,7 @@ const AppProvider = ({ children }: AppProviderProps) => {
       }
 
       data = response.data;
-    } catch (error) {
+    } catch (error: any) {
       Notification.add('error', error.message);
     }
     return data;
@@ -87,8 +89,8 @@ const AppProvider = ({ children }: AppProviderProps) => {
 
         fetch,
 
-        menus,
-        setMenus,
+        dataSource,
+        setDataSource,
       }}
     >
       {modal && (
