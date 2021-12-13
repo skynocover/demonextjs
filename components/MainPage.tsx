@@ -17,18 +17,18 @@ const MainPage = ({ menuKey, content }: MainPageProps) => {
   const renderHeader = () => {
     return (
       <antd.Layout.Header
-        className="d-flex align-items-center px-3 bg-white shadow-sm"
+        className="flex items-center px-3 bg-white shadow-sm"
         style={{ zIndex: 1 }}
       >
         <div>
-          <span className="ml-2">{menuKey}</span>
+          <span className="ml-2 text-white">{menuKey}</span>
         </div>
 
-        <div className="flex-fill" />
+        <div className="flex-1" />
         <antd.Popover
           placement="bottom"
           content={
-            <div className="d-flex flex-column">
+            <div className="flex flex-column">
               <antd.Button
                 type="link"
                 danger
@@ -73,7 +73,7 @@ const MainPage = ({ menuKey, content }: MainPageProps) => {
           {init.concat(appCtx.dataSource).map((server) => {
             return (
               <antd.Menu.Item key={server.name}>
-                <span className="d-flex align-items-center">
+                <span className="flex items-center">
                   <span>{server.name}</span>
                 </span>
               </antd.Menu.Item>
@@ -85,7 +85,7 @@ const MainPage = ({ menuKey, content }: MainPageProps) => {
   };
 
   return (
-    <antd.Layout className="vh-100">
+    <antd.Layout className="h-screen">
       {renderMenu()}
 
       <antd.Layout className="bg-white">

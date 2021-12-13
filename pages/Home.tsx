@@ -1,5 +1,6 @@
 import React from 'react';
 import * as antd from 'antd';
+import useSWR from 'swr';
 
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { MainPage } from '../components/MainPage';
@@ -13,7 +14,7 @@ import { AppContext } from '../components/AppContext';
 import { DangerButton } from '../components/DangerButton';
 import { AddService } from '../modals/AddService';
 
-const Home = ({ services, error }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home = ({ services }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const appCtx = React.useContext(AppContext);
   const [dataSource, setDataSource] = React.useState<Service[]>([]); //coulmns data
 
@@ -21,6 +22,19 @@ const Home = ({ services, error }: InferGetServerSidePropsType<typeof getServerS
   const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [total, setTotal] = React.useState<number>(0);
   const pageSize = 10;
+
+  const makeURL = () => {
+    let params = new URLSearchParams();
+    params.append('pagination[page]', currentPage.toString());
+    params.append('pagination[pageSize]', pageSize.toString());
+    params.append('filters[checkIn][$eq]', 'false');
+    // roomType && params.append('filters[Type][$eq]', roomType);
+    return `/api/rooms?${params.toString()}`;
+  };
+
+  // const { data, error, mutate } = useSWR<{ data: any[]; meta: any }>(makeURL, (url) =>
+  //   appCtx.fetch('get', url),
+  // );
 
   interface Service {
     id: number;
@@ -62,14 +76,14 @@ const Home = ({ services, error }: InferGetServerSidePropsType<typeof getServerS
   ];
 
   React.useEffect(() => {
-    if (error) {
-      Notification.add('error', error);
-    }
+    // if (error) {
+    //   Notification.add('error', error);
+    // }
   }, []);
 
   const content = (
     <>
-      <div className="d-flex justify-content-end mb-2">
+      <div className="flex justify-end mb-2">
         <antd.Button
           type="primary"
           onClick={() => {
@@ -79,7 +93,7 @@ const Home = ({ services, error }: InferGetServerSidePropsType<typeof getServerS
           新增
         </antd.Button>
       </div>
-      <antd.Table dataSource={services} columns={columns} pagination={false} />
+      <antd.Table dataSource={services || []} columns={columns} pagination={false} />
     </>
   );
 
